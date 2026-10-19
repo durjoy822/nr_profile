@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nayem | Our Town</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f8fd;
+      --ink: #1f2a44;
+      --mut: #6b7794;
+      --line: #e6ebf5;
+      --brand: #4f7cff;
+      --green: #43b98a;
+      --shadow: 0 10px 30px -12px rgba(40, 60, 110, .25);
+      --ac: #4f7cff;
+      --dk: #3d5bd0;
+      --soft: #eef3ff
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      overscroll-behavior: none
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #e3f4e0;
+      color: var(--ink);
+      font-size: .95rem
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-weight: 600;
+      color: var(--ink)
+    }
+
+    .mut {
+      color: var(--mut)
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh
+    }
+
+    #stage {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #e3f4e0;
+      overflow: hidden
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none
+    }
+
+    .brandchip {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, .92);
+      border-radius: 99px;
+      padding: 6px 16px 6px 6px;
+      font-weight: 600;
+      box-shadow: var(--shadow)
+    }
+
+    .brandchip i {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f7cff, #8fb0ff);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-style: normal;
+      font-size: .78rem
+    }
+
+    /* Footer dock */
+    .foot {
+      flex: none;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: #e3f4e0;
+      border-top: 0;
+      box-shadow: none
+    }
+
+    .call {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-radius: 99px;
+      padding: 7px 28px 7px 7px;
+      background: linear-gradient(135deg, #ffb86b, #ff7a45);
+      color: #fff;
+      text-align: left;
+      box-shadow: 0 12px 24px -10px rgba(255, 122, 69, .85);
+      transition: transform .2s, box-shadow .2s;
+      animation: pulse 2.4s infinite
+    }
+
+    .call:hover {
+      transform: translateY(-2px) scale(1.03)
+    }
+
+    .call:active {
+      transform: scale(.98)
+    }
+
+    .call .av {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1.55rem;
+      animation: wiggle 3s infinite;
+      flex: none
+    }
+
+    .call b {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.15
+    }
+
+    .call small {
+      display: block;
+      font-weight: 500;
+      opacity: .92;
+      font-size: .74rem;
+      line-height: 1.2
+    }
+
+    .call[disabled] {
+      filter: grayscale(.7);
+      opacity: .55;
+      animation: none;
+      pointer-events: none
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 12px 24px -10px rgba(255, 122, 69, .85), 0 0 0 0 rgba(255, 138, 61, .45)
+      }
+
+      70% {
+        box-shadow: 0 12px 24px -10px rgba(255, 122, 69, .85), 0 0 0 14px rgba(255, 138, 61, 0)
+      }
+
+      100% {
+        box-shadow: 0 12px 24px -10px rgba(255, 122, 69, .85), 0 0 0 0 rgba(255, 138, 61, 0)
+      }
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      86%,
+      100% {
+        transform: rotate(0)
+      }
+
+      90% {
+        transform: rotate(-12deg)
+      }
+
+      94% {
+        transform: rotate(10deg)
+      }
+    }
+
+    .stay {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 99px;
+      padding: 11px 20px;
+      font-weight: 600;
+      color: var(--mut);
+      display: none
+    }
+
+    .stay.on {
+      display: block;
+      animation: fadeUp .4s both
+    }
+
+    .stay:hover {
+      color: var(--ink);
+      border-color: #c9d3ea
+    }
+
+    .prog {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 6px
+    }
+
+    .prog span {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .7);
+      background: rgba(255, 255, 255, .55);
+      font-size: 1rem;
+      filter: grayscale(1) opacity(.5);
+      transition: .4s
+    }
+
+    .prog span.on {
+      filter: none;
+      border-color: var(--green);
+      background: #fff;
+      transform: scale(1.05)
+    }
+
+    @media(max-width:980px) {
+      .prog {
+        display: none
+      }
+    }
+
+    .dpad {
+      display: none;
+      position: fixed;
+      left: 12px;
+      bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+      z-index: 5;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(2, 48px);
+      gap: 5px
+    }
+
+    .dpad button {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .92);
+      border-radius: 14px;
+      color: var(--brand);
+      touch-action: none;
+      box-shadow: var(--shadow)
+    }
+
+    .dpad button:active {
+      background: var(--brand);
+      color: #fff
+    }
+
+    @media(pointer:coarse) {
+      .dpad {
+        display: grid
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* Modal */
+    .modal.fade .modal-dialog {
+      transform: translateY(46px) scale(.92);
+      opacity: 0;
+      transition: transform .5s cubic-bezier(.2, 1.15, .3, 1), opacity .3s
+    }
+
+    .modal.show .modal-dialog {
+      transform: none;
+      opacity: 1
+    }
+
+    .modal-backdrop.show {
+      opacity: .3;
+      backdrop-filter: blur(3px)
+    }
+
+    .modal-content {
+      border: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #f3faf0;
+      box-shadow: 0 30px 80px -20px rgba(31, 42, 68, .5);
+      --dkx: color-mix(in srgb, var(--dk) 68%, #1f2a44);
+      --btn: color-mix(in srgb, var(--dk) 76%, #1f2a44);
+      --line2: color-mix(in srgb, var(--ac) 24%, #ffffff)
+    }
+
+    .ph {
+      padding: 22px 24px 18px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line2)
+    }
+
+    .ph>* {
+      position: relative;
+      z-index: 1
+    }
+
+    .ph::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -50px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .5);
+      animation: floaty 6s ease-in-out infinite
+    }
+
+    .ph::before {
+      content: "";
+      position: absolute;
+      right: 90px;
+      bottom: -40px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--ac) 18%, transparent);
+      animation: floaty 7s 1s ease-in-out infinite reverse
+    }
+
+    @keyframes floaty {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(14px)
+      }
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0)
+      }
+
+      50% {
+        transform: translateY(-4px) rotate(-4deg)
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(.7)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .pe {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1.9rem;
+      box-shadow: var(--shadow);
+      flex: none;
+      animation: pop .6s .2s both cubic-bezier(.2, 1.6, .4, 1), bob 3.2s 1s ease-in-out infinite;
+      border: 2px solid var(--line2)
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0) rotate(-20deg)
+      }
+
+      to {
+        transform: none
+      }
+    }
+
+    .ph h5 {
+      margin: 0;
+      font-size: 1.2rem
+    }
+
+    .pq {
+      margin: 2px 0 0;
+      color: var(--mut);
+      font-size: .88rem
+    }
+
+    .sc {
+      background: #fff;
+      border: 1px solid var(--line2, var(--line));
+      border-top: 3px solid var(--ac);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 6px 16px -12px rgba(31, 42, 68, .25);
+      animation: fadeUp .55s cubic-bezier(.2, .8, .2, 1) both;
+      overflow-wrap: anywhere
+    }
+
+    .sc h6 {
+      font-size: .95rem;
+      margin-bottom: 12px
+    }
+
+    .chip {
+      display: inline-block;
+      background: var(--soft);
+      color: var(--dkx, #3d5bd0);
+      animation: popIn .4s both;
+      border-radius: 99px;
+      padding: 2px 12px;
+      font-size: .82rem;
+      margin: 0 6px 6px 0;
+      text-decoration: none;
+      font-weight: 500
+    }
+
+    .track {
+      height: 9px;
+      background: #edf1f9;
+      border-radius: 99px;
+      overflow: hidden
+    }
+
+    .track i {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--ac), color-mix(in srgb, var(--ac) 50%, #ffffff));
+      transition: width 1.1s ease
+    }
+
+    .sk {
+      margin-bottom: 12px;
+      font-size: .88rem
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px
+    }
+
+    .facts div {
+      background: var(--soft);
+      animation: popIn .45s .35s both;
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center
+    }
+
+    .facts b {
+      display: block;
+      font-size: 1.05rem;
+      color: var(--dkx, var(--brand))
+    }
+
+    .facts span {
+      font-size: .78rem;
+      color: var(--mut)
+    }
+
+    .avl {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #ffd9bd, #ffc6d6);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #b25c3f
+    }
+
+    .tl {
+      position: relative;
+      padding-left: 22px
+    }
+
+    .tl::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: color-mix(in srgb, var(--ac) 35%, #ffffff)
+    }
+
+    .ti {
+      position: relative;
+      margin-bottom: 16px;
+      animation: slideIn .5s both
+    }
+
+    .ti:nth-child(1) {
+      animation-delay: .35s
+    }
+
+    .ti:nth-child(2) {
+      animation-delay: .5s
+    }
+
+    .ti:nth-child(3) {
+      animation-delay: .65s
+    }
+
+    .ti::before {
+      content: "";
+      position: absolute;
+      left: -22px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--ac)
+    }
+
+    .ti .dt {
+      font-size: .8rem;
+      color: var(--dkx, #e4764f);
+      font-weight: 600
+    }
+
+    .ti h6 {
+      margin: 2px 0;
+      font-size: .98rem
+    }
+
+    .ti ul {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      color: var(--mut);
+      font-size: .88rem
+    }
+
+    .pj {
+      display: flex;
+      gap: 12px;
+      height: 100%
+    }
+
+    .pj .ic {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      flex: none
+    }
+
+    .btn-soft {
+      background: var(--btn, var(--brand));
+      color: #fff;
+      border: 0;
+      border-radius: 99px;
+      padding: 8px 20px;
+      font-weight: 600;
+      box-shadow: 0 8px 18px -8px var(--btn, rgba(79, 124, 255, .8));
+      transition: transform .2s, filter .2s
+    }
+
+    .btn-soft:hover {
+      background: var(--btn, #3d6af0);
+      filter: brightness(1.12);
+      transform: translateY(-2px);
+      color: #fff
+    }
+
+    .form-control {
+      border: 1px solid var(--line2, var(--line));
+      border-radius: 12px;
+      background: #fbfdfa
+    }
+
+    .form-control:focus {
+      border-color: var(--ac);
+      box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--ac) 25%, transparent)
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #ffb86b;
+      outline-offset: 2px
+    }
+
+    /* ---------- Responsive: small devices ---------- */
+    @media(max-width:575.98px) {
+      .modal-dialog {
+        --bs-modal-margin: .6rem
+      }
+
+      .modal-content {
+        border-radius: 20px
+      }
+
+      .ph {
+        padding: 16px 16px 12px;
+        gap: 12px
+      }
+
+      .pe {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        font-size: 1.5rem
+      }
+
+      .ph h5 {
+        font-size: 1.05rem
+      }
+
+      .pq {
+        font-size: .78rem;
+        line-height: 1.35
+      }
+
+      .modal-body {
+        padding: .4rem 14px 1rem
+      }
+
+      .sc {
+        padding: 14px;
+        border-radius: 16px
+      }
+
+      .sc h6 {
+        margin-bottom: 10px
+      }
+
+      .facts {
+        gap: 8px
+      }
+
+      .facts div {
+        padding: 8px 4px
+      }
+
+      .facts b {
+        font-size: .92rem
+      }
+
+      .facts span {
+        font-size: .68rem
+      }
+
+      .avl {
+        width: 70px;
+        height: 70px;
+        font-size: 1.3rem
+      }
+
+      .pj .ic {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem
+      }
+
+      .ti h6 {
+        font-size: .92rem
+      }
+
+      .ti ul,
+      .sk {
+        font-size: .82rem
+      }
+
+      .modal-footer {
+        padding: .3rem 14px .9rem
+      }
+
+      .modal-footer .btn-soft {
+        width: 100%;
+        margin: 0
+      }
+
+      .brandchip {
+        left: 10px;
+        top: 10px;
+        font-size: .88rem
+      }
+    }
+
+    @media(max-width:480px) {
+      .foot {
+        gap: 8px;
+        padding-left: 10px;
+        padding-right: 10px
+      }
+
+      .call {
+        gap: 9px;
+        padding: 6px 18px 6px 6px;
+        min-width: 0
+      }
+
+      .call .av {
+        width: 38px;
+        height: 38px;
+        font-size: 1.25rem
+      }
+
+      .call b {
+        font-size: .9rem
+      }
+
+      .call small {
+        font-size: .68rem
+      }
+
+      .stay {
+        padding: 8px 14px;
+        font-size: .82rem;
+        line-height: 1.2;
+        min-width: 0
+      }
+    }
+
+    @media(max-height:480px) and (orientation:landscape) {
+      .ph {
+        padding: 10px 16px 8px
+      }
+
+      .pe {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem
+      }
+
+      .foot {
+        padding-top: 6px;
+        padding-bottom: 6px
+      }
+
+      .call .av {
+        width: 36px;
+        height: 36px
+      }
+
+      .modal-footer {
+        padding: .2rem 14px .5rem
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      * {
+        animation: none !important;
+        transition: none !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div id="stage">
+      <canvas id="g" aria-label="Interactive portfolio town map"></canvas>
+      <div class="brandchip"><i>NR</i>Nayem</div>
+    </div>
+    <footer class="foot">
+      <div class="prog" id="prog"></div>
+      <button class="call" id="callBtn"><span class="av">&#128119;</span><span><b>Call guide</b><small>Sam walks to
+            you</small></span></button>
+      <button class="stay" id="stayBtn">I’ll explore myself</button>
+    </footer>
+  </div>
+  <div class="dpad" id="dp"><span></span><button data-k="up" aria-label="Up">&#9650;</button><span></span><button
+      data-k="left" aria-label="Left">&#9664;</button><button data-k="down" aria-label="Down">&#9660;</button><button
+      data-k="right" aria-label="Right">&#9654;</button></div>
+
+  <div class="modal fade" id="pm" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="ph" id="pH">
+          <div class="pe" id="pE"></div>
+          <div class="flex-grow-1">
+            <h5 id="pT"></h5>
+            <p class="pq" id="pQ"></p>
+          </div><button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-3" id="pB"></div>
+        <div class="modal-footer border-0"><button class="btn-soft" data-bs-dismiss="modal">Continue walking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const $ = s => document.querySelector(s);
+    /* World size is set by applyLayout(): landscape ('l') or portrait ('p', phones) */
+    let W = 1200, H = 790, VY0 = -34, VH = 830, mode = null;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cv = $('#g'), ctx = cv.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 2);
+    let cssW = 1200, cssH = 640, sc = 1, ox = 0, oy = 0;
+    const cam = { y: 0 }; let manualT = 0;
+    const rr = (x, y, w, h, r) => { r = Math.max(0, Math.min(r, w / 2, h / 2)); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath() };
+    const fr = (x, y, w, h, r, c) => { ctx.fillStyle = c; rr(x, y, w, h, r); ctx.fill() };
+    const circ = (x, y, r, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill() };
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+
+    /* ---------- Places (static data; positions come from the layout) ---------- */
+    const PL = [
+      { id: 'home', name: 'Home', emo: '🏠', col: '#ffe3cf', roof: '#f4a77c', win: '#fff8e8', door: '#d98a5f', msg: 'Welcome Home! 🏠 This is where the story begins. Come on in!' },
+      { id: 'about', name: 'About Me', emo: '🏛️', col: '#ebe4ff', roof: '#a995ee', win: '#fffbe6', door: '#8a77d8', msg: 'You’ve arrived at the About Hall! 🎉 Come in and meet the owner.' },
+      { id: 'projects', name: 'Workstation', emo: '💻', col: '#d8f5ec', roof: '#58c6ac', win: '#e8fbff', door: '#3fae94', msg: 'Here we are at the Workstation! 💻 Let’s see what has been built.' },
+      { id: 'qualification', name: 'School', emo: '🏫', col: '#fff3c4', roof: '#f0c25a', win: '#fffdf3', door: '#d9a63a', msg: 'Welcome to the School! 🎓 Let’s look at the studies and certificates.' },
+      { id: 'history', name: 'Office', emo: '🏢', col: '#dcecff', roof: '#6fa3e8', win: '#f4faff', door: '#4f86d4', msg: 'This is the Office! 💼 Let’s see where the owner has worked.' },
+      { id: 'contact', name: 'Post Office', emo: '📮', col: '#ffe1ea', roof: '#f28aa6', win: '#fff7fa', door: '#dd6f8d', msg: 'You made it to the Post Office! 📮 Leave a message for the owner.' },
+      { id: 'training', name: 'Training', emo: '🎯', col: '#e6f5d0', roof: '#86c24f', win: '#fbfff0', door: '#68a53a', msg: 'Welcome to the Training Center! 🎯 Let’s see the courses and workshops.' }];
+    PL.forEach(b => { b.bt = 0; b.open = 0; b.openT = 0 });
+
+    const LAYOUT = {
+      l: {
+        W: 1200, H: 790, VY0: -34, VH: 830,
+        pos: { home: [600, 320, 230, 130], about: [190, 30, 190, 120], projects: [1010, 30, 190, 120], qualification: [130, 330, 190, 120], history: [1070, 330, 190, 120], contact: [600, 30, 190, 120], training: [600, 590, 190, 120] },
+        ex: { W: [440, 512], E: [760, 512], L1: [360, 420], L2: [360, 262], R1: [840, 420], R2: [840, 262], TW: [440, 754], TE: [760, 754] },
+        edges: [['home', 'W'], ['home', 'E'], ['W', 'qualification'], ['E', 'history'], ['W', 'L1'], ['L1', 'L2'], ['L2', 'about'], ['L2', 'contact'], ['contact', 'R2'], ['E', 'R1'], ['R1', 'R2'], ['R2', 'projects'], ['W', 'TW'], ['E', 'TE'], ['TW', 'training'], ['TE', 'training']],
+        trees: [[50, 250], [1150, 250], [290, 345], [910, 345], [400, 95], [800, 95], [60, 560], [1140, 560], [330, 560], [870, 560], [440, 330], [760, 330], [60, 700], [1140, 700], [300, 690], [900, 690]]
+      },
+      p: {
+        W: 420, H: 980, VY0: -14, VH: 1000,
+        pos: { home: [210, 30, 190, 130], about: [105, 290, 150, 120], contact: [315, 290, 150, 120], qualification: [105, 530, 150, 120], history: [315, 530, 150, 120], projects: [105, 770, 150, 120], training: [315, 770, 150, 120] },
+        ex: { S2: [210, 454], S3: [210, 694], S4: [210, 934] },
+        edges: [['home', 'S2'], ['S2', 'about'], ['S2', 'contact'], ['S2', 'S3'], ['S3', 'qualification'], ['S3', 'history'], ['S3', 'S4'], ['S4', 'projects'], ['S4', 'training']],
+        trees: [[40, 215], [380, 215], [40, 500], [380, 500], [40, 740], [380, 740], [40, 955], [380, 955]]
+      }
+    };
+    const N = {};
+    let EDG = [], adj = {}, trees = [], solids = [], patches = [], flowers = [], shades = [], bfs = [];
+
+    function applyLayout(m) {
+      const L = LAYOUT[m]; mode = m; W = L.W; H = L.H; VY0 = L.VY0; VH = L.VH;
+      PL.forEach(b => {
+        const q = L.pos[b.id]; b.cx = q[0]; b.y = q[1]; b.w = q[2]; b.h = q[3]; b.x = b.cx - b.w / 2;
+        b.zone = { x: b.cx - 30, y: b.y + b.h, w: 60, h: 34 }; b.node = [b.cx, b.y + b.h + 44]; b.inside = false
+      });
+      Object.keys(N).forEach(k => delete N[k]); Object.assign(N, L.ex); PL.forEach(b => N[b.id] = b.node);
+      EDG = L.edges; adj = {}; EDG.forEach(([a, b]) => { (adj[a] = adj[a] || []).push(b); (adj[b] = adj[b] || []).push(a) });
+      trees = L.trees;
+      solids = [...PL.map(b => ({ x: b.x - 10, y: b.y, w: b.w + 20, h: b.h })), ...trees.map(t => ({ x: t[0] - 9, y: t[1] - 9, w: 18, h: 18 }))];
+      const k = W * H / (1200 * 600);
+      patches = Array.from({ length: Math.round(34 * k) }, (_, i) => [(i * 211) % W, (i * 127) % H, 40 + (i * 17) % 50]);
+      flowers = Array.from({ length: Math.round(60 * k) }, (_, i) => [(i * 181 + 30) % W, (i * 113 + 20) % H, ['#fff', '#ffe08a', '#ffb3c8', '#cdbcff'][i % 4]]);
+      shades = Array.from({ length: Math.round(H / 190) }, (_, i) => ({ x: (i * 420) % W, y: 80 + i * 190, s: 150 + (i % 3) * 30 }));
+      bfs = Array.from({ length: m === 'p' ? 6 : 5 }, (_, i) => ({ bx: (i * 263 + 120) % W, by: (i * 197 + 90) % H, p: i * 1.7, c: ['#ff8fa6', '#ffd166', '#7ea2ff', '#c4b5fd', '#6fd6bd', '#ffb86b'][i] }));
+    }
+    function route(a, b) {
+      const d = {}, prev = {}, q = new Set(Object.keys(N)); q.forEach(k => d[k] = 1e9); d[a] = 0;
+      while (q.size) { let u = null; q.forEach(k => { if (u === null || d[k] < d[u]) u = k }); q.delete(u); if (u === b) break; (adj[u] || []).forEach(v => { const nd = d[u] + dist(N[u], N[v]); if (nd < d[v]) { d[v] = nd; prev[v] = u } }) }
+      const out = []; let c = b; while (c) { out.unshift(c); c = prev[c] } return out
+    }
+    const nearest = (x, y) => Object.keys(N).reduce((m, k) => dist(N[k], [x, y]) < dist(N[m], [x, y]) ? k : m);
+    const blocked = (x, y) => { const r = { x: x - 9, y: y - 6, w: 18, h: 16 }; if (r.x < 6 || r.y < 6 || r.x + r.w > W - 6 || r.y + r.h > H - 6) return true; return solids.some(s => r.x < s.x + s.w && r.x + r.w > s.x && r.y < s.y + s.h && r.y + r.h > s.y) };
+    const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+    /* ---------- Content panels ---------- */
+    const bar = (n, v) => `<div class="sk"><div class="d-flex justify-content-between"><span>${n}</span><span class="mut">${v}%</span></div><div class="track"><i data-w="${v}"></i></div></div>`;
+    const projects = [['Shop Website', '🛍️', '#ffe3cf', ['HTML', 'Bootstrap', 'JS'], 'Responsive store with cart and filters.'], ['Task Manager', '✅', '#d8f5ec', ['JavaScript'], 'Simple to-do app with due dates.'], ['Banking App UI', '📱', '#ebe4ff', ['Figma', 'UI'], 'Mobile banking screens and flows.'], ['Restaurant Site', '🍽️', '#ffe1ea', ['HTML', 'CSS'], 'Menu and table booking landing page.'], ['Weather App', '⛅', '#dcecff', ['API', 'JS'], 'Live weather and 5-day forecast.'], ['Brand Dashboard', '📈', '#fff3c4', ['Dashboard', 'UI'], 'Analytics dashboard concept.']];
+    const PANELS = {
+      home: {
+        title: 'Home', body: () => `<div class="row g-3"><div class="col-md-5"><div class="sc text-center h-100"><div class="avl">NR</div><h5 class="mt-3 mb-0">Md Nayem Hossain</h5><p class="mut">Web Developer &amp; UI Designer</p><a class="chip" href="#">GitHub</a><a class="chip" href="#">LinkedIn</a><a class="chip" href="#">Facebook</a></div></div>
+ <div class="col-md-7"><div class="sc h-100"><h6>Welcome</h6><p class="mut">I build clean, fast and friendly websites. Every building in this town shows one part of my story. Visit them all, or ask Sam to guide you.</p><div class="facts"><div><b>Dhaka</b><span>Location</span></div><div><b>3+ yrs</b><span>Experience</span></div><div><b>Open</b><span>For work</span></div></div></div></div></div>`},
+      about: {
+        title: 'About Me', body: () => `<div class="row g-3"><div class="col-md-6"><div class="sc h-100"><h6>Who I am</h6><p class="mut">I’m a web developer from Dhaka, Bangladesh. I turn ideas into simple, good-looking websites that work on every device. Replace this with your own story.</p><div class="facts"><div><b>3+</b><span>Years</span></div><div><b>25+</b><span>Projects</span></div><div><b>15+</b><span>Clients</span></div></div><a href="#" class="btn-soft d-inline-block mt-3 text-decoration-none">Download CV</a></div></div>
+ <div class="col-md-6"><div class="sc h-100"><h6>Skills</h6>${bar('HTML & CSS', 90)}${bar('Bootstrap', 85)}${bar('JavaScript', 75)}${bar('Python', 65)}${bar('UI Design', 70)}</div></div>
+ <div class="col-12"><div class="sc"><h6>Tools I use</h6><span class="chip">VS Code</span><span class="chip">Git</span><span class="chip">Figma</span><span class="chip">Node.js</span><span class="chip">Photoshop</span></div></div></div>`},
+      projects: { title: 'My Projects', body: () => `<div class="row g-3">${projects.map(p => `<div class="col-md-6"><div class="sc pj"><div class="ic" style="background:${p[2]}">${p[1]}</div><div><h6 class="mb-1">${p[0]}</h6><p class="mut small mb-2">${p[4]}</p>${p[3].map(t => `<span class="chip">${t}</span>`).join('')}<a href="#" class="chip">Demo</a><a href="#" class="chip">Source</a></div></div></div>`).join('')}</div>` },
+      qualification: {
+        title: 'Qualification', body: () => `<div class="row g-3"><div class="col-md-7"><div class="sc h-100"><h6>Education</h6><div class="tl">
+ <div class="ti"><span class="dt">2020 – 2024</span><h6>B.Sc. in Computer Science</h6><div class="mut small">Your University · CGPA 3.60 / 4.00</div></div>
+ <div class="ti"><span class="dt">2017 – 2019</span><h6>Higher Secondary (HSC)</h6><div class="mut small">Your College · GPA 5.00</div></div>
+ <div class="ti"><span class="dt">2015 – 2017</span><h6>Secondary (SSC)</h6><div class="mut small">Your School · GPA 5.00</div></div></div></div></div>
+ <div class="col-md-5"><div class="sc h-100"><h6>Certificates</h6><p>🏅 <b>Responsive Web Design</b><br><span class="mut small">freeCodeCamp · 2024</span></p><p>🏅 <b>JavaScript Algorithms</b><br><span class="mut small">Coursera · 2023</span></p><p class="mb-0">🏅 <b>Graphic &amp; UI Design</b><br><span class="mut small">Udemy · 2022</span></p></div></div></div>`},
+      history: {
+        title: 'Job History', body: () => `<div class="sc"><h6>Work experience</h6><div class="tl">
+ <div class="ti"><span class="dt">Jan 2025 – Present</span><h6>Frontend Developer</h6><div class="mut small">Company Name, Dhaka</div><ul><li>Built responsive dashboards with Bootstrap</li><li>Cut page load time by 40%</li></ul></div>
+ <div class="ti"><span class="dt">Jun 2023 – Dec 2024</span><h6>Junior Web Developer</h6><div class="mut small">Another Company, Dhaka</div><ul><li>Delivered 12 client websites</li><li>Worked with designers and testers</li></ul></div>
+ <div class="ti"><span class="dt">Jan 2022 – May 2023</span><h6>Freelance Developer</h6><div class="mut small">Fiverr / Upwork</div><ul><li>30+ small projects for international clients</li></ul></div></div></div>`},
+      training: {
+        title: 'Training', body: () => `<div class="row g-3"><div class="col-md-7"><div class="sc h-100"><h6>Courses &amp; trainings</h6><div class="tl">
+ <div class="ti"><span class="dt">2024 · 3 months</span><h6>Full-Stack Web Development</h6><div class="mut small">Your Training Institute, Dhaka</div><ul><li>HTML, CSS, JavaScript and Node.js</li><li>Built 3 real-world projects</li></ul></div>
+ <div class="ti"><span class="dt">2023 · 6 weeks</span><h6>UI/UX Design Fundamentals</h6><div class="mut small">Your Institute / Online</div><ul><li>Wireframes, prototypes and design systems</li></ul></div>
+ <div class="ti"><span class="dt">2022 · 1 month</span><h6>Graphic Design Basics</h6><div class="mut small">Local Training Center, Dhaka</div><ul><li>Photoshop and branding basics</li></ul></div></div></div></div>
+ <div class="col-md-5"><div class="sc h-100"><h6>At a glance</h6><div class="facts mb-3"><div><b>3</b><span>Trainings</span></div><div><b>120+</b><span>Hours</span></div><div><b>3</b><span>Projects</span></div></div><h6>Focus areas</h6><span class="chip">Frontend</span><span class="chip">UI/UX</span><span class="chip">JavaScript</span><span class="chip">Design</span></div></div></div>`},
+      contact: {
+        title: 'Contact', body: () => `<div class="row g-3"><div class="col-md-5"><div class="sc h-100"><h6>Find me</h6><p>✉️ you@example.com</p><p>📞 +880 1XXX-XXXXXX</p><p class="mb-0">📍 Dhaka, Bangladesh</p></div></div>
+ <div class="col-md-7"><form class="sc" id="cf"><h6>Send a message</h6><input class="form-control mb-2" placeholder="Your name" required><input type="email" class="form-control mb-2" placeholder="Your email" required><textarea class="form-control mb-3" rows="3" placeholder="Your message" required></textarea><button class="btn-soft" type="submit">Send</button> <span id="ok" class="ms-2 small" style="color:var(--green)"></span></form></div></div>`}
+    };
+
+    /* ---------- State ---------- */
+    const guide = { x: 565, y: 506, ph: 0, dir: 1, moving: false, path: [], stuck: 0, col: false, done: null, cel: 0, lift: 0 };
+    const user = { x: 640, y: 512, ph: 0, dir: -1, moving: false, cel: 0, lift: 0 };
+    let T = 0, busy = false, follow = false, pending = null, trail = [], target = null, tstk = 0, hover = null, lastSrc = '', visited = new Set(), puffs = [], conf = [], rings = [], bubble = null, choosing = false, chipT = 0;
+    const keys = {}, dp = {};
+    const pm = new bootstrap.Modal('#pm');
+    $('#prog').innerHTML = PL.map(p => `<span id="pg-${p.id}" title="${p.name}">${p.emo}</span>`).join('');
+    const refreshProg = () => PL.forEach(p => $('#pg-' + p.id).classList.toggle('on', visited.has(p.id)));
+
+    /* ---------- Layout / camera / resize ---------- */
+    const modalOpen = () => $('#pm').classList.contains('show');
+    const viewH = () => cssH / sc;
+    function clampCam(v) { const lo = -14, hi = H + 14 - viewH(); if (hi < lo) return (lo + hi) / 2; return Math.max(lo, Math.min(hi, v)) }
+    function fit() {
+      if (mode === 'p') { sc = Math.min(cssW / W, 1.5); ox = (cssW - W * sc) / 2; oy = -cam.y * sc }
+      else { sc = Math.min(cssW / W, cssH / VH); ox = (cssW - W * sc) / 2; oy = (cssH - VH * sc) / 2 - VY0 * sc }
+    }
+    function resetActors() {
+      const h = N.home; guide.x = h[0] - 35; guide.y = h[1] + 12; user.x = h[0] + 40; user.y = h[1] + 18;
+      guide.path = []; guide.done = null; guide.stuck = 0; guide.moving = false; user.moving = false; trail = []; target = null; pending = null; follow = false; choosing = false; bubble = null; busy = false; manualT = 0; setDock()
+    }
+    function resize() {
+      const r = $('#stage').getBoundingClientRect(); if (r.height < 2 || r.width < 2) return;
+      cssW = r.width; cssH = r.height; cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+      const want = cssW / cssH < 0.9 ? 'p' : 'l';
+      if (want !== mode && !modalOpen()) { const first = mode === null; applyLayout(want); fit(); if (first || true) resetActors(); cam.y = 0; fit(); cam.y = clampCam(user.y - viewH() * .55); }
+      fit()
+    }
+
+    /* ---------- Bubble, effects, dock ---------- */
+    function say(text) { bubble = { text, n: 0 } }
+    function setDock() { $('#callBtn').disabled = busy; $('#stayBtn').classList.toggle('on', choosing && !busy) }
+    function stopChoosing() { choosing = false; bubble = null; setDock() }
+    function burst(x, y) {
+      for (let i = 0; i < 36; i++) { const a = Math.random() * Math.PI * 2, s = 90 + Math.random() * 200; conf.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 190, r: Math.random() * 6, vr: (Math.random() - .5) * 14, c: ['#ff8fa6', '#ffd166', '#6fd6bd', '#7ea2ff', '#c4b5fd'][i % 5], t: 0, l: 1.2 + Math.random() * .7, w: 5 + Math.random() * 5 }) }
+      rings.push({ x, y, t: 0, c: '255,184,107' }, { x, y, t: -.2, c: '126,162,255' })
+    }
+
+    /* ---------- Movement ---------- */
+    function step(e, tx, ty, sp, dt, col) {
+      const dx = tx - e.x, dy = ty - e.y, d = Math.hypot(dx, dy); if (d < 2) return 0; const s = Math.min(sp * dt, d), mx = dx / d * s, my = dy / d * s; let m = 0;
+      if (!col || !blocked(e.x + mx, e.y)) { e.x += mx; m += Math.abs(mx) } if (!col || !blocked(e.x, e.y + my)) { e.y += my; m += Math.abs(my) }
+      if (Math.abs(mx) > .01) e.dir = mx > 0 ? 1 : -1; e.ph += s / 11; return m
+    }
+    function pathTo(from, id) {
+      const a = nearest(from.x, from.y), pts = []; if (dist(N[a], [from.x, from.y]) > 6) pts.push(N[a]);
+      route(a, id).forEach(k => pts.push(N[k])); const n = N[id]; pts.push([n[0] - 28, n[1]]); return pts
+    }
+
+    function lead(id) {
+      if (busy) return; busy = true; follow = true; trail = []; target = null; choosing = false; manualT = 0; const p = PL.find(x => x.id === id);
+      say('This way! Follow me to the ' + p.name + ' 🚶'); setDock(); guide.col = false; guide.path = pathTo(guide, id); guide.done = () => { pending = id }
+    }
+    function callGuide() {
+      if (busy) return; manualT = 0; if (dist([guide.x, guide.y], [user.x, user.y]) < 110) { guide.dir = user.x >= guide.x ? 1 : -1; return talk('call') }
+      busy = true; choosing = false; say('On my way! 🏃'); setDock(); const a = nearest(guide.x, guide.y), b = nearest(user.x, user.y), pts = [];
+      if (dist(N[a], [guide.x, guide.y]) > 6) pts.push(N[a]); route(a, b).forEach(k => pts.push(N[k]));
+      const o = [[-44, 0], [44, 0], [0, 40], [0, -40]].map(v => [user.x + v[0], user.y + v[1]]).find(p => !blocked(p[0], p[1])) || [user.x, user.y];
+      pts.push(o); guide.col = true; guide.path = pts; guide.done = () => { busy = false; guide.dir = user.x >= guide.x ? 1 : -1; talk('call') }
+    }
+    function talk(kind) {
+      if (busy) return; const left = PL.filter(p => !visited.has(p.id));
+      const t = { intro: 'Hi! I’m Sam, your guide. Tap any place and I’ll walk you there. Don’t pick? I’ll wait right here at Home.', call: 'You called? I’m here! Where would you like to go?', next: left.length ? 'Hope you enjoyed that! Where to next? ' + left.length + ' place' + (left.length > 1 ? 's' : '') + ' left.' : 'You’ve seen every place. Thank you for visiting! 🎉 Say hi at the Post Office anytime.' }[kind];
+      guide.dir = user.x >= guide.x ? 1 : -1; choosing = true; chipT = T; say(t); setDock()
+    }
+    function arrive(id) {
+      const b = PL.find(x => x.id === id); follow = false; guide.dir = user.x >= guide.x ? 1 : -1; guide.cel = 1.4; user.cel = 1.2;
+      b.bt = .001; b.openT = 1; burst(b.cx, b.zone.y + 6); say(b.msg); setTimeout(() => openPanel(id, 'guided'), 2300)
+    }
+    function arriveFree(b) { burst(b.cx, b.zone.y + 6); b.bt = .001; b.openT = 1; user.cel = 1.2; stopChoosing(); setTimeout(() => openPanel(b.id, 'free'), 900) }
+    function openPanel(id, src) {
+      const p = PL.find(x => x.id === id), c = PANELS[id]; visited.add(id); refreshProg(); lastSrc = src; busy = true; follow = false; bubble = null; choosing = false; setDock();
+      const mc = document.querySelector('#pm .modal-content'); mc.style.setProperty('--ac', p.roof); mc.style.setProperty('--dk', p.door); mc.style.setProperty('--soft', p.col);
+      $('#pH').style.background = `linear-gradient(135deg,${p.col},#f3faf0)`; $('#pE').textContent = p.emo; $('#pT').textContent = c.title; $('#pQ').textContent = 'Sam: “' + p.msg.replace(/ ?[🏠🎉💻🎓💼📮🎯]/g, '') + '”';
+      $('#pB').innerHTML = c.body(); document.querySelectorAll('#pB .sc').forEach((e, i) => e.style.animationDelay = (.2 + i * .1) + 's'); document.querySelectorAll('#pB .chip').forEach((e, i) => e.style.animationDelay = (.45 + i * .05) + 's'); pm.show();
+      setTimeout(() => document.querySelectorAll('#pB [data-w]').forEach(e => e.style.width = e.dataset.w + '%'), 500);
+      const f = $('#cf'); if (f) f.onsubmit = e => { e.preventDefault(); $('#ok').textContent = 'Thanks! Message ready (demo form).'; e.target.reset() }
+    }
+    $('#pm').addEventListener('hidden.bs.modal', () => { PL.forEach(b => b.openT = 0); busy = false; setDock(); resize(); if (lastSrc === 'guided') { lastSrc = ''; setTimeout(() => talk('next'), 450) } });
+    $('#callBtn').onclick = callGuide; $('#stayBtn').onclick = stopChoosing;
+
+    /* ---------- Update ---------- */
+    function update(dt) {
+      T += dt;
+      shades.forEach(s => { if (!reduce) { s.x += 10 * dt; if (s.x > W + 200) s.x = -300 } });
+      if (bubble) bubble.n = Math.min(bubble.text.length, bubble.n + dt * (reduce ? 999 : 46));
+      PL.forEach(b => { if (b.bt > 0) { b.bt += dt * 1.3; if (b.bt >= 1) b.bt = 0 } b.open += (b.openT - b.open) * Math.min(1, dt * 7) });
+      [guide, user].forEach(p => { if (p.cel > 0) { p.cel -= dt; const k = Math.max(0, (p === guide ? 1.4 : 1.2) - p.cel); p.lift = Math.abs(Math.sin(k * Math.PI * 2.2)) * (p === guide ? 18 : 13) } else p.lift = 0 });
+      conf.forEach(c => { c.vy += 520 * dt; c.vx *= .99; c.x += c.vx * dt; c.y += c.vy * dt; c.r += c.vr * dt; c.t += dt }); for (let i = conf.length - 1; i >= 0; i--)if (conf[i].t > conf[i].l) conf.splice(i, 1);
+      rings.forEach(r => r.t += dt * 1.5); for (let i = rings.length - 1; i >= 0; i--)if (rings[i].t > 1) rings.splice(i, 1);
+      guide.moving = false;
+      if (guide.path.length) {
+        const t = guide.path[0], m = step(guide, t[0], t[1], 150, dt, guide.col);
+        if (m) { guide.moving = true; guide.stuck = 0; const l = trail[trail.length - 1]; if (!l || dist(l, [guide.x, guide.y]) > 8) trail.push([guide.x, guide.y]) } else guide.stuck += dt;
+        if (dist([guide.x, guide.y], t) < 3 || guide.stuck > .5) { guide.path.shift(); guide.stuck = 0; if (!guide.path.length && guide.done) { const f = guide.done; guide.done = null; f() } }
+      }
+      user.moving = false;
+      if (follow) {
+        if (dist([user.x, user.y], [guide.x, guide.y]) > 48) { const t = trail[0] || [guide.x, guide.y]; if (step(user, t[0], t[1], 190, dt, false)) user.moving = true; if (trail.length && dist([user.x, user.y], t) < 5) trail.shift() }
+        if (pending && !guide.path.length && dist([user.x, user.y], [guide.x, guide.y]) < 74) { const id = pending; pending = null; arrive(id) }
+      }
+      else if (!busy) {
+        let dx = 0, dy = 0;
+        if (keys.ArrowLeft || keys.a || dp.left) dx--; if (keys.ArrowRight || keys.d || dp.right) dx++; if (keys.ArrowUp || keys.w || dp.up) dy--; if (keys.ArrowDown || keys.s || dp.down) dy++;
+        let m = 0; if (dx || dy) { target = null; manualT = 0; if (choosing) stopChoosing(); const n = Math.hypot(dx, dy); m = step(user, user.x + dx / n * 100, user.y + dy / n * 100, 175, dt, true) }
+        else if (target) { m = step(user, target.x, target.y, 175, dt, true); if (!m) { tstk += dt; if (tstk > .3 || dist([user.x, user.y], [target.x, target.y]) < 5) target = null } else tstk = 0 }
+        user.moving = m > 0;
+        const ub = { x: user.x - 9, y: user.y - 6, w: 18, h: 16 };
+        PL.forEach(b => { const inz = overlap(ub, b.zone); if (inz && !b.inside) { b.inside = true; if (!busy) { busy = true; target = null; arriveFree(b) } } else if (!inz) b.inside = false })
+      }
+      [guide, user].forEach(p => { if (p.moving) { p.pf = (p.pf || 0) - dt; if (p.pf < 0) { p.pf = .13; puffs.push({ x: p.x - p.dir * 5, y: p.y + 14, t: 0 }) } } });
+      puffs.forEach(q => q.t += dt * 2.2); puffs = puffs.filter(q => q.t < 1);
+      /* camera (portrait / phone): scrolls vertically and follows the action */
+      if (mode === 'p') {
+        if (T > manualT) { const f = (follow || guide.path.length) ? guide : user; const tg = clampCam(f.y - viewH() * .55); cam.y += (tg - cam.y) * Math.min(1, dt * 4) }
+        oy = -cam.y * sc
+      }
+    }
+
+    /* ---------- Drawing ---------- */
+    function ground() {
+      ctx.fillStyle = '#e3f4e0'; ctx.fillRect(-600, -300, W + 1200, H + 600);
+      patches.forEach(p => { ctx.fillStyle = 'rgba(176,220,166,.3)'; ctx.beginPath(); ctx.ellipse(p[0], p[1], p[2], p[2] * .6, 0, 0, 7); ctx.fill() });
+      flowers.forEach(f => circ(f[0], f[1], 2.6, f[2]));
+      const ln = (a, b, w, c) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke() };
+      const segs = [...EDG.map(([a, b]) => [N[a], N[b]]), ...PL.map(b => [[b.cx, b.zone.y + 8], b.node])];
+      segs.forEach(s => ln(s[0], s[1], 46, '#efe2c6')); segs.forEach(s => ln(s[0], s[1], 38, '#fbf3e1'));
+      const h = N.home; circ(h[0], h[1], 80, '#efe2c6'); circ(h[0], h[1], 72, '#fbf3e1');
+      ctx.strokeStyle = '#efe2c6'; ctx.lineWidth = 3; ctx.setLineDash([6, 9]); ctx.beginPath(); ctx.arc(h[0], h[1], 52, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = '600 11px Poppins,sans-serif'; ctx.fillStyle = '#b9a77f'; ctx.textAlign = 'center'; ctx.fillText('TOWN SQUARE', h[0], h[1] + 66);
+      shades.forEach(s => { ctx.fillStyle = 'rgba(70,110,90,.06)'; ctx.beginPath(); ctx.ellipse(s.x, s.y, s.s, s.s * .38, 0, 0, 7); ctx.fill() })
+    }
+    function drawB(b) {
+      const { x, y, w, h, cx } = b;
+      const sy = b.bt > 0 ? 1 + Math.sin(b.bt * Math.PI * 3) * .06 * (1 - b.bt) : 1; ctx.save(); ctx.translate(cx, y + h); ctx.scale(1 + (1 - sy) * .7, sy); ctx.translate(-cx, -(y + h));
+      ctx.fillStyle = 'rgba(60,80,120,.13)'; ctx.beginPath(); ctx.ellipse(cx, y + h + 3, w / 2 + 12, 9, 0, 0, 7); ctx.fill();
+      fr(x, y + 24, w, h - 24, 14, b.col); fr(x - 10, y, w + 20, 44, 16, b.roof); fr(x - 10, y + 34, w + 20, 10, 5, 'rgba(0,0,0,.07)');
+      if (b.id === 'home') {
+        fr(x + w - 48, y - 18, 20, 30, 4, '#e8b89a');
+        if (!reduce) for (let i = 0; i < 3; i++) { const k = (T * .35 + i / 3) % 1; circ(x + w - 38 + Math.sin(T * 2 + i * 2) * 5 * k, y - 22 - k * 36, 3 + k * 7, `rgba(255,255,255,${.75 * (1 - k)})`) }
+      }
+      if (b.id === 'qualification') {
+        ctx.fillStyle = '#b88a2e'; ctx.fillRect(cx - 1.5, y - 26, 3, 28);
+        const fw = reduce ? 0 : 1; ctx.fillStyle = '#ff8fa6'; ctx.beginPath(); ctx.moveTo(cx + 1, y - 26);
+        for (let i = 0; i <= 22; i += 2) ctx.lineTo(cx + 1 + i, y - 26 + Math.sin(T * 6 + i * .35) * 1.8 * fw * (i / 22));
+        for (let i = 22; i >= 0; i -= 2) ctx.lineTo(cx + 1 + i, y - 13 + Math.sin(T * 6 + i * .35) * 1.8 * fw * (i / 22));
+        ctx.closePath(); ctx.fill()
+      }
+      [x + 22, x + w - 22 - 36].forEach(wx => {
+        fr(wx, y + 62, 36, 30, 8, b.open > .3 ? '#fff2bd' : b.win); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; rr(wx, y + 62, 36, 30, 8); ctx.stroke();
+        if (b.id === 'projects') { fr(wx + 6, y + 68, 14, 4, 2, '#58c6ac'); fr(wx + 6, y + 75, 22, 4, 2, '#a8e6d6'); fr(wx + 6, y + 82, 10, 4, 2, '#ffb3c8') } else { ctx.fillStyle = 'rgba(0,0,0,.06)'; ctx.fillRect(wx + 17, y + 62, 2, 30) }
+      });
+      const op = b.open;
+      if (op > .02) {
+        const g = ctx.createRadialGradient(cx, y + h + 8, 4, cx, y + h + 8, 70 * op); g.addColorStop(0, 'rgba(255,233,166,.85)'); g.addColorStop(1, 'rgba(255,233,166,0)'); ctx.fillStyle = g; ctx.fillRect(cx - 80, y + h - 40, 160, 100);
+        fr(cx - 18, y + h - 52, 36, 52, 16, '#ffe9a6'); ctx.fillStyle = '#ffe9a6'; ctx.fillRect(cx - 18, y + h - 26, 36, 26)
+      }
+      const lw = 36 * (1 - op * .84); fr(cx - 18, y + h - 52, lw, 52, 16, b.door); ctx.fillStyle = b.door; ctx.fillRect(cx - 18, y + h - 26, lw, 26); circ(cx - 18 + lw - 9, y + h - 24, 2.6, '#fff');
+      [-1, 1].forEach(s => { fr(cx + s * 40 - 6, y + h - 10, 12, 10, 3, '#e9a98b'); circ(cx + s * 40, y + h - 15, 7, '#86d395') });
+      if (b.id === 'contact') { fr(x + w + 10, y + h - 42, 12, 42, 3, '#c9cfe0'); fr(x + w + 4, y + h - 56, 24, 16, 5, '#ff7f9c') }
+      if (b.id === 'training') { const tx = x + w + 20, ty = y + h - 34; fr(tx - 1.5, ty, 3, 34, 1, '#c9a37a'); circ(tx, ty - 6, 15, '#ff7f9c'); circ(tx, ty - 6, 10, '#fff'); circ(tx, ty - 6, 5, '#ff7f9c') }
+      fr(cx - 30, y + h + 6, 60, 8, 4, 'rgba(0,0,0,.07)');
+      ctx.font = '600 13px Poppins,sans-serif'; const lb = b.emo + '  ' + b.name, tw2 = ctx.measureText(lb).width + 24;
+      fr(cx - tw2 / 2, y + 10, tw2, 26, 13, '#fff'); ctx.fillStyle = '#27324f'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(lb, cx, y + 24); ctx.textBaseline = 'alphabetic';
+      if (visited.has(b.id)) { circ(cx + tw2 / 2, y + 10, 9, '#43b98a'); ctx.fillStyle = '#fff'; ctx.font = '700 11px Poppins,sans-serif'; ctx.textBaseline = 'middle'; ctx.fillText('✓', cx + tw2 / 2, y + 10.5); ctx.textBaseline = 'alphabetic' }
+      if (hover === b.id && !busy) { ctx.strokeStyle = 'rgba(39,50,79,.5)'; ctx.lineWidth = 2; ctx.setLineDash([7, 6]); rr(x - 16, y - 6, w + 32, h + 14, 20); ctx.stroke(); ctx.setLineDash([]) }
+      ctx.restore()
+    }
+    function chip(b, i) {
+      const k = Math.max(0, Math.min(1, (T - chipT - i * .07) * 4)); if (k <= 0) return; const v = visited.has(b.id), hv = hover === b.id, by = b.y - 18 + Math.sin(T * 4 + i * .8) * 3, t = (i + 1) + '  ' + (v ? '✓ Visit again' : '▶ Go here');
+      ctx.font = '600 12px Poppins,sans-serif'; const w2 = ctx.measureText(t).width + 26, s = k * (1 + .15 * Math.sin(k * Math.PI)) * (hv ? 1.1 : 1);
+      ctx.save(); ctx.translate(b.cx, by); ctx.scale(s, s); ctx.fillStyle = 'rgba(31,42,68,.16)'; rr(-w2 / 2 + 1, -10, w2, 26, 13); ctx.fill(); fr(-w2 / 2, -13, w2, 26, 13, hv ? '#4f7cff' : '#fff');
+      ctx.fillStyle = hv ? '#fff' : (v ? '#2f9d72' : '#3d5bd0'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, 0, 0); ctx.restore(); ctx.textBaseline = 'alphabetic'
+    }
+    function drawTree(t) {
+      const [x, y] = t; ctx.fillStyle = 'rgba(60,80,120,.12)'; ctx.beginPath(); ctx.ellipse(x, y + 12, 18, 6, 0, 0, 7); ctx.fill();
+      ctx.save(); if (!reduce) { ctx.translate(x, y + 14); ctx.rotate(Math.sin(T * 1.4 + x * .05) * .03); ctx.translate(-x, -(y + 14)) }
+      fr(x - 4, y - 4, 8, 18, 3, '#c79a72'); circ(x, y - 16, 22, '#8fd39a'); circ(x - 7, y - 22, 12, '#a9e2b1'); circ(x + 9, y - 10, 12, '#7cc98a'); ctx.restore()
+    }
+    function drawBfs() {
+      if (reduce) return;
+      bfs.forEach(b => {
+        const x = b.bx + Math.sin(T * .6 + b.p) * 60 + Math.sin(T * 1.7 + b.p) * 10, y = b.by + Math.cos(T * .45 + b.p * 1.3) * 40 + Math.sin(T * 2.3 + b.p) * 6, f = Math.abs(Math.sin(T * 13 + b.p));
+        ctx.save(); ctx.translate(x, y); ctx.fillStyle = b.c; ctx.beginPath(); ctx.ellipse(-3.5, -1, 4 * f + .6, 5.5, -.5, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(3.5, -1, 4 * f + .6, 5.5, .5, 0, 7); ctx.fill(); fr(-.8, -4, 1.6, 9, .8, '#4a3b57'); ctx.restore()
+      })
+    }
+    function person(p, o, label) {
+      const wk = p.moving, sw = wk ? Math.sin(p.ph) : 0, bob = wk ? -Math.abs(Math.cos(p.ph)) * 2.6 : Math.sin(T * 2.2) * -1, lf = p.lift || 0;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.fillStyle = 'rgba(50,70,110,.16)'; ctx.beginPath(); ctx.ellipse(0, 15, 13 - lf * .2, 4.5, 0, 0, 7); ctx.fill();
+      ctx.scale(p.dir * 1.15, 1.15); ctx.translate(0, bob - lf / 1.15);
+      const limb = (x, y, a, l, w, c, e) => { ctx.save(); ctx.translate(x, y); ctx.rotate(a); fr(-w / 2, 0, w, l, w / 2, c); if (e) circ(0, l - 1, w / 2 + .6, e); ctx.restore() };
+      if (o.pack) fr(-17, -14, 10, 18, 4, o.pack);
+      limb(-3, 6, -sw * .65, 11, 6, o.pants, o.shoe); limb(-9, -11, sw * .7, 12, 5, o.sleeve, o.skin);
+      fr(-9, -15, 18, 22, 7, o.top);
+      if (o.vest) { fr(-9, -15, 18, 22, 7, o.vest); ctx.fillStyle = '#fff6d6'; ctx.fillRect(-9, -8, 18, 2.4); ctx.fillRect(-9, -1, 18, 2.4) }
+      limb(3, 6, sw * .65, 11, 6, o.pants, o.shoe);
+      circ(0, -25, 9, o.skin);
+      if (o.hat) { ctx.fillStyle = o.hat; ctx.beginPath(); ctx.arc(0, -27, 10, Math.PI, 0); ctx.fill(); fr(-11, -28, 24, 4, 2, o.hat) }
+      else { ctx.fillStyle = o.hair; ctx.beginPath(); ctx.arc(0, -27, 9.6, Math.PI * 1.02, Math.PI * 1.98); ctx.fill() }
+      circ(3, -24.5, 1.3, '#2b2f45'); circ(7, -24.5, 1.3, '#2b2f45'); circ(5.5, -21.5, 1.6, 'rgba(255,120,140,.35)');
+      const wave = (o.wave && !wk) || p.cel > 0; ctx.save(); ctx.translate(9, -11); ctx.rotate(wave ? -2.6 + Math.sin(T * 9) * .35 : -sw * .7); fr(-2.5, 0, 5, 12, 2.5, o.sleeve); circ(0, 11, 3.1, o.skin); ctx.restore();
+      if (p.cel > 0) { ctx.save(); ctx.translate(-9, -11); ctx.rotate(2.6 - Math.sin(T * 9) * .35); fr(-2.5, 0, 5, 12, 2.5, o.sleeve); circ(0, 11, 3.1, o.skin); ctx.restore() }
+      ctx.restore();
+      ctx.font = '600 11px Poppins,sans-serif'; ctx.textAlign = 'center'; const w2 = ctx.measureText(label).width + 16;
+      fr(p.x - w2 / 2, p.y - 66 + bob - lf, w2, 19, 9.5, o.tag); ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle'; ctx.fillText(label, p.x, p.y - 56 + bob - lf); ctx.textBaseline = 'alphabetic'
+    }
+    const GUIDE = { skin: '#f2c9a0', hat: '#ffc83d', top: '#fff', vest: '#ff8a3d', sleeve: '#fff', pants: '#55658a', shoe: '#3b455f', wave: true, tag: '#ff8a3d' };
+    const USER = { skin: '#e8b98f', hair: '#2f2c3f', top: '#43b9a8', sleeve: '#43b9a8', pants: '#5b7bd5', shoe: '#fff', pack: '#ff8fa6', tag: '#4f7cff' };
+    function drawBubble() {
+      if (!bubble) return; ctx.font = '600 14px Poppins,sans-serif'; const maxW = 270, words = bubble.text.split(' '), lines = []; let cur = '';
+      words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w } else cur = t }); lines.push(cur);
+      const bw = Math.min(maxW, Math.max(...lines.map(l => ctx.measureText(l).width))) + 34, bh = lines.length * 21 + 22;
+      const bx = Math.min(Math.max(guide.x, bw / 2 + 6), W - bw / 2 - 6), minBy = mode === 'p' ? cam.y + 6 : -26; let by = guide.y - 92 - bh - (guide.lift || 0) + Math.sin(T * 3) * 2; if (by < minBy) by = minBy;
+      ctx.fillStyle = 'rgba(31,42,68,.14)'; rr(bx - bw / 2 + 2, by + 5, bw, bh, 18); ctx.fill(); fr(bx - bw / 2, by, bw, bh, 18, '#fff');
+      const tx = Math.min(Math.max(guide.x, bx - bw / 2 + 26), bx + bw / 2 - 26); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(tx - 10, by + bh - 1); ctx.lineTo(tx + 10, by + bh - 1); ctx.lineTo(Math.min(Math.max(guide.x, tx - 14), tx + 14), by + bh + 14); ctx.fill();
+      ctx.fillStyle = '#27324f'; ctx.textAlign = 'left'; let left = Math.floor(bubble.n); lines.forEach((l, i) => { ctx.fillText(l.slice(0, Math.max(0, left)), bx - bw / 2 + 17, by + 27 + i * 21); left -= l.length + 1 }); ctx.textAlign = 'center'
+    }
+    function draw() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.fillStyle = '#e3f4e0'; ctx.fillRect(0, 0, cssW, cssH); ctx.setTransform(dpr * sc, 0, 0, dpr * sc, dpr * ox, dpr * oy);
+      ground(); puffs.forEach(q => { ctx.fillStyle = `rgba(255,255,255,${.55 * (1 - q.t)})`; ctx.beginPath(); ctx.arc(q.x, q.y, 3 + q.t * 7, 0, 7); ctx.fill() });
+      PL.forEach(drawB);
+      if (target) { ctx.strokeStyle = 'rgba(79,124,255,.7)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(target.x, target.y, 8 + Math.sin(T * 8) * 2, 0, 7); ctx.stroke() }
+      const idle = !busy && !bubble && !guide.path.length;
+      if (idle) { ctx.strokeStyle = `rgba(255,138,61,${.5 + .3 * Math.sin(T * 4)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(guide.x, guide.y + 15, 20 + Math.sin(T * 4) * 3, 8, 0, 0, 7); ctx.stroke() }
+      [...trees.map(t => ({ y: t[1], f: () => drawTree(t) })), { y: guide.y, f: () => person(guide, GUIDE, 'Sam · Guide') }, { y: user.y, f: () => person(user, USER, 'You · Visitor') }].sort((a, b) => a.y - b.y).forEach(o => o.f());
+      drawBfs();
+      rings.forEach(r => { if (r.t <= 0) return; ctx.strokeStyle = `rgba(${r.c},${1 - r.t})`; ctx.lineWidth = 5 * (1 - r.t) + 1; ctx.beginPath(); ctx.arc(r.x, r.y, 10 + r.t * 110, 0, 7); ctx.stroke() });
+      if (choosing && !busy) PL.forEach(chip);
+      if (idle) {
+        const by = guide.y - 98 + Math.sin(T * 3) * 3, t = '💬 Need help? Click me'; ctx.font = '600 12px Poppins,sans-serif'; ctx.textAlign = 'center'; const w2 = ctx.measureText(t).width + 22;
+        fr(guide.x - w2 / 2, by - 14, w2, 26, 13, '#fff'); ctx.fillStyle = '#27324f'; ctx.textBaseline = 'middle'; ctx.fillText(t, guide.x, by); ctx.textBaseline = 'alphabetic'
+      }
+      drawBubble();
+      conf.forEach(c => { ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, (c.l - c.t) * 2)); ctx.translate(c.x, c.y); ctx.rotate(c.r); ctx.fillStyle = c.c; ctx.fillRect(-c.w / 2, -c.w / 4, c.w, c.w / 2); ctx.restore() })
+    }
+    let last = 0; function loop(ts) { const dt = Math.min((ts - last) / 1000 || 0, .05); last = ts; update(dt); draw(); requestAnimationFrame(loop) }
+
+    /* ---------- Input ---------- */
+    const pos = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left - ox) / sc, y: (e.clientY - r.top - oy) / sc } };
+    const bAt = p => PL.find(b => p.x > b.x - 10 && p.x < b.x + b.w + 10 && p.y > b.y - 6 && p.y < b.y + b.h + 8);
+    const onGuide = p => Math.abs(p.x - guide.x) < 26 && p.y > guide.y - 70 && p.y < guide.y + 20;
+    function tapAt(p) {
+      if (busy) return; const b = bAt(p);
+      if (onGuide(p)) { callGuide(); return }
+      if (b) { lead(b.id); return }
+      if (choosing) stopChoosing(); manualT = 0; target = p
+    }
+    let drag = null;
+    cv.addEventListener('pointermove', e => {
+      if (drag && mode === 'p') {
+        const dy = e.clientY - drag.sy; if (Math.abs(dy) > 8) drag.moved = true;
+        if (drag.moved && !busy) { cam.y = clampCam(drag.cy - dy / sc); manualT = T + (choosing ? 10 : 3.5) }
+        return
+      }
+      const p = pos(e), b = bAt(p); hover = b && !busy ? b.id : null; cv.style.cursor = (hover || (onGuide(p) && !busy)) ? 'pointer' : 'default'
+    });
+    cv.addEventListener('pointerdown', e => {
+      if (mode === 'p') { drag = { sy: e.clientY, cy: cam.y, moved: false }; try { cv.setPointerCapture(e.pointerId) } catch (_) { } return }
+      tapAt(pos(e))
+    });
+    cv.addEventListener('pointerup', e => { if (drag) { const d = drag; drag = null; if (!d.moved) tapAt(pos(e)) } });
+    cv.addEventListener('pointercancel', () => { drag = null });
+    addEventListener('keydown', e => {
+      if (/INPUT|TEXTAREA/.test(e.target.tagName)) return; const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (busy) return;
+      if (k === 'g') { callGuide(); return } if (k === 'Escape') { stopChoosing(); return }
+      if (/^[1-7]$/.test(k)) { lead(PL[+k - 1].id); return }
+      keys[k] = true; if (/Arrow/.test(e.key)) e.preventDefault()
+    });
+    addEventListener('keyup', e => { keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = false });
+    document.querySelectorAll('#dp button').forEach(b => {
+      const k = b.dataset.k, on = e => { e.preventDefault(); dp[k] = true }, off = () => dp[k] = false;
+      b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off)
+    });
+
+    /* ---------- Start: welcome animation at Home, then Sam greets ---------- */
+    new ResizeObserver(resize).observe($('#stage')); addEventListener('orientationchange', () => setTimeout(resize, 250)); resize();
+    requestAnimationFrame(loop);
+    const home = PL[0];
+    setTimeout(() => { burst(home.cx, home.zone.y + 6); home.bt = .001; home.openT = 1; guide.cel = 1.4; user.cel = 1.2 }, 500);
+    setTimeout(() => { home.openT = 0; talk('intro') }, 1900);
+  </script>
+</body>
+
+</html>
